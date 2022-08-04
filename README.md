@@ -122,3 +122,8 @@ renren-fast
   - 已实现文件上传功能及文件删除功能
     - 文件上传后查看功能，已与前端沟通，所有的静态资源由前端进行管理，前端指定nginx目录，后端进行存储即可。
 
+业务流程图
+ 
+<img width="1722" alt="image" src="https://user-images.githubusercontent.com/20388507/182788802-cb68bcb9-de00-4b49-a939-07c408051a05.png">
+
+
