@@ -31,7 +31,7 @@ public interface TxrhMxYzmxService extends IService<TxrhMxYzmxEntity> {
     // 根据原子模型Id 获取原子模型及其参数信息
     YzmxVo getYzmxAndParamsById(Long id);
     // 获取目录结构的选择框
-    List<SelectOptionVo> getMenuOptions();
+    List<SelectOptionVo> getMenuOptions(TxrhMxYzmxEntity search);
 
     // 获取tree接口模型数据
     List<NodeMenuVo> getTreeList(TxrhMxYzmxEntity search);

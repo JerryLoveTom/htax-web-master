@@ -147,8 +147,10 @@ public class TxrhMxYzmxServiceImpl  extends ServiceImpl<TxrhMxYzmxDao, TxrhMxYzm
 
     // 获取目录结构的选择框
     @Override
-    public List<SelectOptionVo> getMenuOptions() {
-        List<TxrhMxYzmxEntity> yzmxList = baseMapper.selectList(new QueryWrapper<TxrhMxYzmxEntity>().eq("ml_jd",0));
+    public List<SelectOptionVo> getMenuOptions(TxrhMxYzmxEntity search) {
+        List<TxrhMxYzmxEntity> yzmxList = baseMapper.selectList(new QueryWrapper<TxrhMxYzmxEntity>()
+                .eq("ml_jd",0)
+                .eq(search.getCreateUser()!=null,"create_user",search.getCreateUser()));
         List<SelectOptionVo>list = new ArrayList<>();
         if (yzmxList.size() > 0){
             yzmxList.stream().forEach(i -> {

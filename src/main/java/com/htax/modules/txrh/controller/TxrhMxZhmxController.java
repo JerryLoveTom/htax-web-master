@@ -103,6 +103,14 @@ public class TxrhMxZhmxController extends AbstractController {
     @PostMapping("/save")
     @ApiOperation("保存")
     public R save(@RequestBody TxrhMxZhmxEntity txrhMxZhmx){
+        if(getUserId() != Constant.SUPER_ADMIN){
+            if (getUser().getRoleIdList() == null){
+                return R.error("没有权限");
+            }
+            if (getUser().getRoleIdList().contains(Constant.MXYHJS_ID)){
+                txrhMxZhmx.setCreateUser(getUserId());
+            }
+        }
 		txrhMxZhmxService.save(txrhMxZhmx);
 
         return R.ok();

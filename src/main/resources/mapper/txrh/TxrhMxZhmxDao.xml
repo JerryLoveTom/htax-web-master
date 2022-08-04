@@ -42,6 +42,9 @@
         UNION
         select * from txrh_mx_zhmx
         where is_delete = 0 and sh_zt = 2
+        <if test="search.mxMc != null and search.mxMc != ''">
+            and mx_mc like CONCAT('%',#{search.mxMc},'%')
+        </if>
     </select>
 
     <select id="getInfoById" resultType="com.htax.modules.txrh.entity.TxrhMxZhmxEntity">

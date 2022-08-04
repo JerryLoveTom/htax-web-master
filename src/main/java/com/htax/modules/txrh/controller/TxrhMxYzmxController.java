@@ -121,7 +121,13 @@ public class TxrhMxYzmxController  extends AbstractController {
     @GetMapping("/menu/option")
     @ApiOperation("列表")
     public R menuOptions(){
-        List<SelectOptionVo> options = txrhMxYzmxService.getMenuOptions();
+        TxrhMxYzmxEntity search = new TxrhMxYzmxEntity();
+        if(getUserId() != Constant.SUPER_ADMIN) {
+            if (getUser().getRoleIdList().contains(Constant.MXYHJS_ID)) {
+                search.setCreateUser(getUserId());
+            }
+        }
+        List<SelectOptionVo> options = txrhMxYzmxService.getMenuOptions(search);
 
         return R.ok().put("items",options);
     }

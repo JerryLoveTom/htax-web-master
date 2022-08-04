@@ -23,7 +23,7 @@ public class TxrhMxZhmxEntity implements Serializable {
 	/**
 	 *
 	 */
-	@TableId(type=IdType.ASSIGN_ID)
+	@TableId(type=IdType.ID_WORKER_STR)
 	private String id;
 	/**
 	 * 模型名称(组合)

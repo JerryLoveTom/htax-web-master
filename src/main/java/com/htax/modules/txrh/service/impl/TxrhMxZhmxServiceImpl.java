@@ -39,6 +39,7 @@ public class TxrhMxZhmxServiceImpl extends ServiceImpl<TxrhMxZhmxDao, TxrhMxZhmx
         // TODO: 代码需要优化
         // 考虑几个问题：1 如果是管理员登陆，看到的是公开的模型，如果是本人登陆既能看到自己的，也能看到公开的
         // 管理员只能去审核模型
+        List<NodeMenuVo>list = new ArrayList<>(2);
         List<TxrhMxZhmxEntity> resultList = baseMapper.getMineAndPublic(search);
         NodeMenuVo myModel = new NodeMenuVo();
         myModel.setId("1-1");
@@ -47,7 +48,7 @@ public class TxrhMxZhmxServiceImpl extends ServiceImpl<TxrhMxZhmxDao, TxrhMxZhmx
         pubModel.setId("1-2");
         pubModel.setLabel("公开工作流");
         if (resultList.size() > 0){
-            List<NodeMenuVo>list = new ArrayList<>();
+            List<NodeMenuVo>tempList = new ArrayList<>();
             List<NodeMenuVo>pubList = new ArrayList<>();
             if (search.getCreateUser() != null){
                 resultList.stream().filter(i -> search.getCreateUser().equals(i.getCreateUser())).forEach(i -> {
@@ -56,9 +57,9 @@ public class TxrhMxZhmxServiceImpl extends ServiceImpl<TxrhMxZhmxDao, TxrhMxZhmx
                     vo.setPid(i.getPid());
                     vo.setLabel(i.getMxMc());
                     vo.setValue(i.getId());
-                    list.add(vo);
+                    tempList.add(vo);
                 });
-                myModel.setChildren(list);
+                myModel.setChildren(tempList);
                 resultList.stream().filter(i -> !search.getCreateUser().equals(i.getCreateUser())).forEach(i -> {
                     NodeMenuVo vo = new NodeMenuVo();
                     vo.setId(i.getId());
@@ -81,59 +82,10 @@ public class TxrhMxZhmxServiceImpl extends ServiceImpl<TxrhMxZhmxDao, TxrhMxZhmx
                 pubModel.setChildren(pubList);
             }
         }
-        List<NodeMenuVo>list = new ArrayList<>(2);
         list.add(myModel);
         list.add(pubModel);
         return list;
     }
-
-    private List<NodeMenuVo> getNodeMenuVos(TxrhMxZhmxEntity search) {
-        QueryWrapper<TxrhMxZhmxEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.like(StringUtil.isNotEmpty(search.getMxMc()), "mx_mc", search.getMxMc())
-                .eq(search.getCreateUser()!=null, "create_user", search.getCreateUser())
-                .eq(search.getShZt() != null,"sh_zt", search.getShZt())
-                .eq(search.getFbZt() != null, "fb_zt", search.getFbZt())
-                .orderByDesc("update_time");
-        List<TxrhMxZhmxEntity> yzmxList = baseMapper.selectList(queryWrapper);
-        List<NodeMenuVo>list = new ArrayList<>();
-        if (yzmxList.size() > 0){
-            yzmxList.stream().forEach(i -> {
-                NodeMenuVo vo = new NodeMenuVo();
-                vo.setId(i.getId().toString());
-                vo.setPid(i.getPid());
-                vo.setLabel(i.getMxMc());
-                vo.setValue(i.getId());
-                list.add(vo);
-            });
-        }
-        NodeMenuVo myModel = new NodeMenuVo();
-        myModel.setId("1-1");
-        myModel.setLabel("我的工作流");
-        myModel.setChildren(list);
-        List<TxrhMxZhmxEntity> publicModels = baseMapper.selectList(new QueryWrapper<TxrhMxZhmxEntity>()
-                .like(StringUtil.isNotEmpty(search.getMxMc()), "mx_mc", search.getMxMc())
-                .eq("sh_zt", 2).orderByDesc("update_time"));
-        List<NodeMenuVo>pubList = new ArrayList<>();
-        if (publicModels.size() > 0){
-            publicModels.stream().forEach(i -> {
-                NodeMenuVo vo = new NodeMenuVo();
-                vo.setId(i.getId().toString());
-                vo.setPid(i.getPid());
-                vo.setLabel(i.getMxMc());
-                vo.setValue(i.getId());
-                pubList.add(vo);
-            });
-        }
-        NodeMenuVo pubModel = new NodeMenuVo();
-        pubModel.setId("1-2");
-        pubModel.setLabel("公开工作流");
-        pubModel.setChildren(pubList);
-        List<NodeMenuVo>result = new ArrayList<>(2);
-        result.add(myModel);
-        result.add(pubModel);
-        return result;
-    }
-
     @Override
     public TxrhMxZhmxEntity getInfoById(String id) {
         return baseMapper.getInfoById(id);
