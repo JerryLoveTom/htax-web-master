@@ -2,10 +2,16 @@ package com.htax.modules.txrh.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.htax.modules.txrh.dao.TxrhZhmxJdDao;
+import com.htax.modules.txrh.dao.TxrhZhmxLxDao;
 import com.htax.modules.txrh.entity.TxrhMxYzmxEntity;
+import com.htax.modules.txrh.entity.TxrhZhmxJdEntity;
+import com.htax.modules.txrh.entity.TxrhZhmxLxEntity;
 import com.htax.modules.txrh.entity.vo.NodeMenuVo;
+import com.htax.modules.txrh.entity.vo.WorkFlowDataVo;
 import com.htax.modules.txrh.utils.TreeUtils;
 import dm.jdbc.util.StringUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
@@ -19,8 +25,10 @@ import java.util.List;
 
 @Service("txrhMxZhmxService")
 public class TxrhMxZhmxServiceImpl extends ServiceImpl<TxrhMxZhmxDao, TxrhMxZhmxEntity> implements TxrhMxZhmxService {
-
-
+    @Autowired
+    private TxrhZhmxJdDao zhmxJdDao; // 节点
+    @Autowired
+    private TxrhZhmxLxDao zhmxLxDao;// 连线
     // 带分页，带条件的列表查询
     @Override
     public Page<TxrhMxZhmxEntity>  queryPage(Long current, Long limit, TxrhMxZhmxEntity search) {
@@ -89,5 +97,21 @@ public class TxrhMxZhmxServiceImpl extends ServiceImpl<TxrhMxZhmxDao, TxrhMxZhmx
     @Override
     public TxrhMxZhmxEntity getInfoById(String id) {
         return baseMapper.getInfoById(id);
+    }
+
+    // 通过组合模型id获取模型、节点及连线信息
+    @Override
+    public WorkFlowDataVo getFlowDataById(String id) {
+        WorkFlowDataVo vo = new WorkFlowDataVo();
+        // 1 获取组合模型基础信息
+        TxrhMxZhmxEntity info = this.getById(id);
+        vo.setName(info.getMxMc());
+        // 2 获取组合模型节点信息
+        List<TxrhZhmxJdEntity> nodeList = zhmxJdDao.selectList(new QueryWrapper<TxrhZhmxJdEntity>().eq("zhmx_id", id));
+        vo.setNodeList(nodeList);
+        // 3 获取组合模型连线信息
+        List<TxrhZhmxLxEntity> lineList = zhmxLxDao.selectList(new QueryWrapper<TxrhZhmxLxEntity>().eq("zhmx_id", id));
+        vo.setLineList(lineList);
+        return vo;
     }
 }

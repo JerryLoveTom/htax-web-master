@@ -1,6 +1,8 @@
 package com.htax.modules.txrh.entity;
 
+import com.alibaba.excel.annotation.write.style.ColumnWidth;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
@@ -28,26 +30,30 @@ public class TxrhZhmxJdEntity implements Serializable {
 	/**
 	 * 外键，组合模型的id
 	 */
-	private Long zhmxId;
+	private String zhmxId;
 	/**
 	 * 外键，原子模型的id
 	 */
-	private Long yzmxId;
+	private String yzmxId;
 	/**
-	 * 字典，类型 0.数据源 1.模型 2.流程结束 3.数据清理
+	 * 字典，类型 source.数据源 model.模型 end.流程结束 dataclear.数据清理
 	 */
-	private Long lx;
+	@TableField("lx")
+	private String type;
 	/**
 	 * 模型名称,可以是原子模型的名字，也可以重新起新名字
 	 */
-	private String mxMc;
+	@TableField("mx_mc")
+	private String name;
 	/**
 	 * 坐标
 	 */
+	@TableField("`left`")
 	private String left;
 	/**
 	 * 坐标
 	 */
+	@TableField("`top`")
 	private String top;
 	/**
 	 * 图标

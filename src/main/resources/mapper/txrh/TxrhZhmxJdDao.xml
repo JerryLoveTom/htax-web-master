@@ -8,8 +8,8 @@
         <result property="id" column="id"/>
         <result property="zhmxId" column="zhmx_id"/>
         <result property="yzmxId" column="yzmx_id"/>
-        <result property="lx" column="lx"/>
-        <result property="mxMc" column="mx_mc"/>
+        <result property="type" column="lx"/>
+        <result property="name" column="mx_mc"/>
         <result property="left" column="left"/>
         <result property="top" column="top"/>
         <result property="ico" column="ico"/>

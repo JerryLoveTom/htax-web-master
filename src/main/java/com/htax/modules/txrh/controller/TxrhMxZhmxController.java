@@ -8,6 +8,7 @@ import com.htax.common.utils.Constant;
 import com.htax.modules.sys.controller.AbstractController;
 import com.htax.modules.txrh.entity.TxrhMxYzmxEntity;
 import com.htax.modules.txrh.entity.vo.NodeMenuVo;
+import com.htax.modules.txrh.entity.vo.WorkFlowDataVo;
 import com.htax.modules.txrh.service.TxrhMxYzmxService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -36,6 +37,14 @@ public class TxrhMxZhmxController extends AbstractController {
     private TxrhMxZhmxService txrhMxZhmxService;
     @Autowired
     private TxrhMxYzmxService txrhMxYzmxService;
+
+    // 通过Id 获取组合模型的连线、节点信息
+    @GetMapping("/flowdata/{id}")
+    @ApiOperation("通过Id 获取组合模型的连线、节点信息")
+    public R flowData(@ApiParam(name = "id",value = "组合模型id") @PathVariable String id){
+        WorkFlowDataVo item = txrhMxZhmxService.getFlowDataById(id);
+        return R.ok().put("item",item);
+    }
     /**
      * 获取左侧模型树：可能包含 1.原子模型 2.输入数据源 3.输出
      * */

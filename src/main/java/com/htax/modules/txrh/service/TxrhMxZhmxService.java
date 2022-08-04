@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.htax.modules.txrh.entity.TxrhMxZhmxEntity;
 import com.htax.modules.txrh.entity.vo.NodeMenuVo;
+import com.htax.modules.txrh.entity.vo.WorkFlowDataVo;
 
 import java.util.List;
 
@@ -24,5 +25,8 @@ public interface TxrhMxZhmxService extends IService<TxrhMxZhmxEntity> {
 
     // 获取组合模型信息，包含创建者名称
     TxrhMxZhmxEntity getInfoById(String id);
+
+    // 通过组合模型id获取模型、节点及连线信息
+    WorkFlowDataVo getFlowDataById(String id);
 }
 

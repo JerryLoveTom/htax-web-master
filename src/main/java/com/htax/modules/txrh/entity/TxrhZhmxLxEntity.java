@@ -1,6 +1,7 @@
 package com.htax.modules.txrh.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
@@ -24,18 +25,20 @@ public class TxrhZhmxLxEntity implements Serializable {
 	 *
 	 */
 	@TableId(type = IdType.INPUT)
-	private Long id;
+	private String id;
 	/**
 	 * 外键，组合模型的id
 	 */
-	private Long zhmxId;
+	private String zhmxId;
 	/**
 	 * 开始节点ID
 	 */
+	@TableField("`from`")
 	private String from;
 	/**
 	 * 结束节点ID
 	 */
+	@TableField("`to`")
 	private String to;
 	/**
 	 * 条件
