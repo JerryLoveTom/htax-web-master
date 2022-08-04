@@ -55,4 +55,32 @@
         )a
     </select>
 
+    <select id="getMineAndPublicModel" resultType="com.htax.modules.txrh.entity.TxrhMxYzmxEntity">
+        select * from (
+            SELECT * FROM txrh_mx_yzmx
+            WHERE is_delete=0
+            <if test="yzmx.mxMc != null and yzmx.mxMc != ''">
+                and mx_mc = #{yzmx.mxMc }
+            </if>
+            <if test="yzmx.createUser != null and yzmx.createUser != ''">
+                and create_user = #{yzmx.createUser }
+            </if>
+            <if test="yzmx.shZt != null and yzmx.shZt != ''">
+                and sh_zt = #{yzmx.shZt }
+            </if>
+            <if test="yzmx.fbZt != null and yzmx.fbZt != ''">
+                and fb_zt = #{yzmx.fbZt }
+            </if>
+            <if test="yzmx.mlJd != null and yzmx.mlJd != ''">
+                and ml_jd = #{yzmx.mlJd}
+            </if>
+            order by update_time desc
+        ) a
+        UNION
+        select * from (
+            SELECT * FROM txrh_mx_yzmx
+            WHERE is_delete=0 and sh_zt =2
+            order by update_time desc
+        )b
+    </select>
 </mapper>

@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * 原子模型基础表
  *
@@ -17,4 +19,6 @@ import org.apache.ibatis.annotations.Param;
 public interface TxrhMxYzmxDao extends BaseMapper<TxrhMxYzmxEntity> {
 
     Page<TxrhMxYzmxEntity> queryPage(Page<TxrhMxYzmxEntity> page, @Param("yzmx") TxrhMxYzmxEntity search);
+
+    List<TxrhMxYzmxEntity>getMineAndPublicModel(@Param("yzmx") TxrhMxYzmxEntity yzmx);
 }

@@ -156,6 +156,7 @@ public class TxrhMxYzmxController  extends AbstractController {
                 entity.setCreateUser(getUserId());
             }
         }
+        if ("0".equals(entity.getMlJd()))entity.setShZt(2); // 如果是目录，则是通过状态，方便后期查询使用
 		txrhMxYzmxService.saveRelated(entity);
 
         return R.ok();

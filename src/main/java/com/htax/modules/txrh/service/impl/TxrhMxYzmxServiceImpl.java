@@ -161,7 +161,7 @@ public class TxrhMxYzmxServiceImpl  extends ServiceImpl<TxrhMxYzmxDao, TxrhMxYzm
                 vo.setValue(i.getId().toString());
                 list.add(vo);
             });
-//            List<SelectOptionVo>vos = TreeUtils.getTreeList("0",list);
+        // List<SelectOptionVo>vos = TreeUtils.getTreeList("0",list);
         }
         return list;
     }
@@ -174,7 +174,8 @@ public class TxrhMxYzmxServiceImpl  extends ServiceImpl<TxrhMxYzmxDao, TxrhMxYzm
         queryWrapper.eq(search.getShZt() != null,"sh_zt",search.getShZt());
         queryWrapper.eq(search.getFbZt() != null, "fb_zt",search.getFbZt());
         queryWrapper.orderByDesc("update_time");
-        List<TxrhMxYzmxEntity> yzmxList = baseMapper.selectList(queryWrapper);
+        // List<TxrhMxYzmxEntity> yzmxList = baseMapper.selectList(queryWrapper);
+        List<TxrhMxYzmxEntity> yzmxList = baseMapper.getMineAndPublicModel(search);
         List<NodeMenuVo>list = new ArrayList<>();
         if (yzmxList.size() > 0){
             yzmxList.stream().forEach(i -> {
