@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.htax.modules.txrh.dao.TxrhZhmxJdDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.htax.modules.txrh.entity.TxrhZhmxJdEntity" id="txrhZhmxJdMap">
+        <result property="id" column="id"/>
+        <result property="zhmxId" column="zhmx_id"/>
+        <result property="yzmxId" column="yzmx_id"/>
+        <result property="lx" column="lx"/>
+        <result property="mxMc" column="mx_mc"/>
+        <result property="left" column="left"/>
+        <result property="top" column="top"/>
+        <result property="ico" column="ico"/>
+        <result property="state" column="state"/>
+    </resultMap>
+
+
+</mapper>

@@ -1,0 +1,8 @@
+version: '2'
+services:
+  htax-fast:
+    image: htax/fast
+    ports:
+      - "8803:8803"
+    environment:
+      - spring.profiles.active=dev

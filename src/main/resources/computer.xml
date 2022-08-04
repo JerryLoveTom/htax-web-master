@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<computerList>
+    <computer id="001">
+        <name>戴尔</name> <!--品牌-->
+        <price>5000</price> <!--售价-->
+        <stock>20</stock> <!--库存-->
+        <product>北京</product> <!--产地-->
+    </computer>
+    <computer id="002">
+        <name>华硕</name>
+        <price>4000</price>
+        <stock>300</stock>
+        <product>浙江</product>
+    </computer>
+    <computer id="003">
+        <name>荣耀</name>
+        <price>3500</price>
+        <stock>100</stock>
+        <product>四川</product>
+    </computer>
+</computerList>

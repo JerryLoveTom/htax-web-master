@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.htax.modules.txrh.dao.TxrhMxYzmxDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.htax.modules.txrh.entity.TxrhMxYzmxEntity" id="txrhMxYzmxMap">
+        <result property="id" column="id"/>
+        <result property="mxMc" column="mx_mc"/>
+        <result property="mxLj" column="mx_lj"/>
+        <result property="mxWjMc" column="mx_wj_mc"/>
+        <result property="mxWjSjMc" column="mx_wj_sj_mc"/>
+        <result property="lMc" column="l_mc"/>
+        <result property="ffMc" column="ff_mc"/>
+        <result property="sfyCs" column="sfy_cs"/>
+        <result property="sfyFhz" column="sfy_fhz"/>
+        <result property="csMs" column="cs_ms"/>
+        <result property="fhzMs" column="fhz_ms"/>
+        <result property="bz" column="bz"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createUser" column="create_user"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDelete" column="is_delete"/>
+        <result property="shZt" column="sh_zt"/>
+        <result property="fbZt" column="fb_zt"/>
+        <result property="shYy" column="sh_yy"/>
+        <result property="pid" column="pid"/>
+        <result property="mlJd" column="ml_jd"/>
+    </resultMap>
+    <!--查询自己发布的原子模型和管理员审核通过的公共模型-->
+    <select id="queryPage" resultType="com.htax.modules.txrh.entity.TxrhMxYzmxEntity">
+        select * from (
+            SELECT * FROM txrh_mx_yzmx
+            WHERE is_delete=0
+            <if test="yzmx.mxMc != null and yzmx.mxMc != ''">
+                and mx_mc = #{yzmx.mxMc }
+            </if>
+            <if test="yzmx.createUser != null and yzmx.createUser != ''">
+                and create_user = #{yzmx.createUser }
+            </if>
+            <if test="yzmx.shZt != null and yzmx.shZt != ''">
+                and sh_zt = #{yzmx.shZt }
+            </if>
+            <if test="yzmx.fbZt != null and yzmx.fbZt != ''">
+                and fb_zt = #{yzmx.fbZt }
+            </if>
+            <if test="yzmx.mlJd != null and yzmx.mlJd != ''">
+                and ml_jd = #{yzmx.mlJd}
+            </if>
+            order by update_time desc
+            UNION
+            SELECT * FROM txrh_mx_yzmx
+            WHERE is_delete=0 AND fb_zt =1 and sh_zt =2
+            order by update_time desc
+        )a
+    </select>
+
+</mapper>
