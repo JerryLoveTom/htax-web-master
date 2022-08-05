@@ -3,6 +3,7 @@ package com.htax.modules.txrh.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.htax.common.utils.uuid.UUID;
 import com.htax.modules.txrh.dao.TxrhMxYzmxDao;
 import com.htax.modules.txrh.entity.TxrhMxYzmxEntity;
 import com.htax.modules.txrh.entity.TxrhYzmxCcsEntity;
@@ -67,18 +68,18 @@ public class TxrhMxYzmxServiceImpl  extends ServiceImpl<TxrhMxYzmxDao, TxrhMxYzm
         BeanUtils.copyProperties(entity, txrhMxYzmx);
         this.save(txrhMxYzmx);
         if (txrhMxYzmx.getSfyCs() == 1 && entity.getYzmxCccsList() != null){
-            List<TxrhYzmxCcsEntity> collect = entity.getYzmxCccsList().stream().map(item -> {
-                item.setMxId(txrhMxYzmx.getId());
-                return item;
-            }).collect(Collectors.toList());
-            yzmxCcsService.saveBatch(collect);
-        }
-        if (txrhMxYzmx.getSfyFhz() == 1 && entity.getYzmxRccsList() != null){
             List<TxrhYzmxRcsEntity> collect = entity.getYzmxRccsList().stream().map(item -> {
                 item.setMxId(txrhMxYzmx.getId());
                 return item;
             }).collect(Collectors.toList());
             yzmxRcsService.saveBatch(collect);
+        }
+        if (txrhMxYzmx.getSfyFhz() == 1 && entity.getYzmxRccsList() != null){
+            List<TxrhYzmxCcsEntity> collect = entity.getYzmxCccsList().stream().map(item -> {
+                item.setMxId(txrhMxYzmx.getId());
+                return item;
+            }).collect(Collectors.toList());
+            yzmxCcsService.saveBatch(collect);
         }
     }
 
@@ -180,10 +181,10 @@ public class TxrhMxYzmxServiceImpl  extends ServiceImpl<TxrhMxYzmxDao, TxrhMxYzm
         if (yzmxList.size() > 0){
             yzmxList.stream().forEach(i -> {
                 NodeMenuVo vo = new NodeMenuVo();
-                vo.setId(i.getId().toString());
+                vo.setId(i.getId());
                 vo.setPid(i.getPid());
                 vo.setName(i.getMxMc());
-                vo.setType("model");
+                vo.setType(UUID.fastUUID().toString());
                 if ("0".equals(i.getPid())){
                     vo.setIco("el-icon-video-pause");
                     vo.setOpen(true);

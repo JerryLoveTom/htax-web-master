@@ -40,7 +40,7 @@ public class TxrhYzmxRcsEntity implements Serializable {
 	/**
 	 * 参数类型:0.int 1.string 2.boolen 3.list 4.float
 	 */
-	private Integer csLx;
+	private String csLx;
 	/**
 	 * 方法运行总耗时
 	 */
