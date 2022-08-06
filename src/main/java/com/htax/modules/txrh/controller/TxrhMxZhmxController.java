@@ -34,10 +34,23 @@ import com.htax.common.utils.R;
 @Api("组合模型")
 public class TxrhMxZhmxController extends AbstractController {
     @Autowired
-    private TxrhMxZhmxService txrhMxZhmxService;
+    private TxrhMxZhmxService txrhMxZhmxService;// 组合模型
     @Autowired
-    private TxrhMxYzmxService txrhMxYzmxService;
+    private TxrhMxYzmxService txrhMxYzmxService; // 原子模型
 
+    @GetMapping("/clone/{id}")
+    @ApiOperation("克隆模型信息")
+    public R clone(@PathVariable("id") String id){
+        boolean success = txrhMxZhmxService.cloneFlow(id);
+        return R.ok();
+    }
+    // 保存模型流程信息
+    @PostMapping("/flowdata")
+    @ApiOperation("保存模型流程信息")
+    public R saveFlowData(@RequestBody WorkFlowDataVo entity){
+        int result = txrhMxZhmxService.saveFlowData(entity);
+        return R.ok();
+    }
     // 通过Id 获取组合模型的连线、节点信息
     @GetMapping("/flowdata/{id}")
     @ApiOperation("通过Id 获取组合模型的连线、节点信息")
@@ -139,11 +152,10 @@ public class TxrhMxZhmxController extends AbstractController {
     /**
      * 删除
      */
-    @DeleteMapping("/delete")
+    @DeleteMapping("/delete/{id}")
     @ApiOperation("删除")
-    public R delete(@RequestBody String[] ids){
-		txrhMxZhmxService.removeByIds(Arrays.asList(ids));
-
+    public R delete(@PathVariable("id") String id){
+        txrhMxZhmxService.deleteZhmxById(id);
         return R.ok();
     }
 

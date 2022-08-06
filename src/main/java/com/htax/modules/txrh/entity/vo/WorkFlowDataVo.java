@@ -16,6 +16,9 @@ import java.util.List;
  */
 @Data
 public class WorkFlowDataVo {
+    // 组合模型id
+    private String zhmxId;
+
     // 业务模版名称
     private String name;
 

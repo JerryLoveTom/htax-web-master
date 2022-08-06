@@ -2,15 +2,15 @@ package com.htax.modules.txrh.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.htax.modules.txrh.dao.TxrhZhmxJdDao;
-import com.htax.modules.txrh.dao.TxrhZhmxLxDao;
-import com.htax.modules.txrh.entity.TxrhMxYzmxEntity;
+import com.htax.common.utils.uuid.UUID;
 import com.htax.modules.txrh.entity.TxrhZhmxJdEntity;
 import com.htax.modules.txrh.entity.TxrhZhmxLxEntity;
 import com.htax.modules.txrh.entity.vo.NodeMenuVo;
 import com.htax.modules.txrh.entity.vo.WorkFlowDataVo;
-import com.htax.modules.txrh.utils.TreeUtils;
+import com.htax.modules.txrh.service.TxrhZhmxJdService;
+import com.htax.modules.txrh.service.TxrhZhmxLxService;
 import dm.jdbc.util.StringUtil;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -18,17 +18,19 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.htax.modules.txrh.dao.TxrhMxZhmxDao;
 import com.htax.modules.txrh.entity.TxrhMxZhmxEntity;
 import com.htax.modules.txrh.service.TxrhMxZhmxService;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service("txrhMxZhmxService")
 public class TxrhMxZhmxServiceImpl extends ServiceImpl<TxrhMxZhmxDao, TxrhMxZhmxEntity> implements TxrhMxZhmxService {
     @Autowired
-    private TxrhZhmxJdDao zhmxJdDao; // 节点
+    private TxrhZhmxJdService zhmxJdService; // 节点
     @Autowired
-    private TxrhZhmxLxDao zhmxLxDao;// 连线
+    private TxrhZhmxLxService zhmxLxService;// 连线
     // 带分页，带条件的列表查询
     @Override
     public Page<TxrhMxZhmxEntity>  queryPage(Long current, Long limit, TxrhMxZhmxEntity search) {
@@ -107,11 +109,83 @@ public class TxrhMxZhmxServiceImpl extends ServiceImpl<TxrhMxZhmxDao, TxrhMxZhmx
         TxrhMxZhmxEntity info = this.getById(id);
         vo.setName(info.getMxMc());
         // 2 获取组合模型节点信息
-        List<TxrhZhmxJdEntity> nodeList = zhmxJdDao.selectList(new QueryWrapper<TxrhZhmxJdEntity>().eq("zhmx_id", id));
+        List<TxrhZhmxJdEntity> nodeList = zhmxJdService.list(new QueryWrapper<TxrhZhmxJdEntity>().eq("zhmx_id", id));
         vo.setNodeList(nodeList);
         // 3 获取组合模型连线信息
-        List<TxrhZhmxLxEntity> lineList = zhmxLxDao.selectList(new QueryWrapper<TxrhZhmxLxEntity>().eq("zhmx_id", id));
+        List<TxrhZhmxLxEntity> lineList = zhmxLxService.list(new QueryWrapper<TxrhZhmxLxEntity>().eq("zhmx_id", id));
         vo.setLineList(lineList);
         return vo;
+    }
+    //保存模型流程信息
+    @Override
+    @Transactional
+    public int saveFlowData(WorkFlowDataVo entity) {
+        // 删除节点
+        zhmxJdService.remove(new QueryWrapper<TxrhZhmxJdEntity>().eq("zhmx_id", entity.getZhmxId()));
+        // 删除连线
+        zhmxLxService.remove(new QueryWrapper<TxrhZhmxLxEntity>().eq("zhmx_id", entity.getZhmxId()));
+        // 保存节点
+        entity.getNodeList().stream().forEach(item -> item.setZhmxId(entity.getZhmxId()));
+        zhmxJdService.saveBatch(entity.getNodeList());
+        // 保存连线
+        entity.getLineList().stream().forEach(item -> item.setZhmxId(entity.getZhmxId()));
+        zhmxLxService.saveBatch(entity.getLineList());
+        return 0;
+    }
+
+    // 删除组合模型及其关联表相关数据
+    @Override
+    @Transactional
+    public boolean deleteZhmxById(String id) {
+        // TODO： 后期可能会有变动，比如参数配置信息等
+        // 删除工作流节点信息
+        zhmxJdService.remove(new QueryWrapper<TxrhZhmxJdEntity>().eq("zhmx_id", id));
+        // 删除工作流连线信息
+        zhmxLxService.remove(new QueryWrapper<TxrhZhmxLxEntity>().eq("zhmx_id", id));
+        // 删除工作流基础信息（组合模型信息）
+        return this.removeById(id);
+    }
+
+    // 克隆模型信息
+    @Override
+    public boolean cloneFlow(String id) {
+        // 1、首先查询工作流基本信息并赋值给新对象
+        TxrhMxZhmxEntity zhmxInfo = this.getById(id);
+        TxrhMxZhmxEntity info = new TxrhMxZhmxEntity();
+        BeanUtils.copyProperties(zhmxInfo,info);
+        info.setId(null);// 因为是新增，所以id要为空
+        info.setMxMc(info.getMxMc() + "-副本");
+        this.save(info);// 保存信息，并返回info的Id
+        System.out.println("info = " + info);
+        // 2、查询节点信息并赋值给新list
+        List<TxrhZhmxJdEntity> oldNodeList = zhmxJdService.list(new QueryWrapper<TxrhZhmxJdEntity>().eq("zhmx_id", id));
+        // 3、查询连线信息并赋值给新list
+        List<TxrhZhmxLxEntity> oldLineList = zhmxLxService.list(new QueryWrapper<TxrhZhmxLxEntity>().eq("zhmx_id", id));
+        if (oldNodeList.size() > 0){
+            // 实例化两个列表用来存储新的节点和连线信息
+            List<TxrhZhmxJdEntity> nodeList = new ArrayList<>(oldNodeList.size());
+            for (int i = 0; i < oldNodeList.size(); i++) {
+                TxrhZhmxJdEntity tempEntity = oldNodeList.get(i);
+                TxrhZhmxJdEntity node = new TxrhZhmxJdEntity();
+                BeanUtils.copyProperties(tempEntity, node);
+                // 节点的新id
+                String newNodeId = UUID.randomUUID().toString(true);
+                node.setId(newNodeId);
+                node.setZhmxId(info.getId());
+                nodeList.add(node);
+                // 修改连线
+                oldLineList.stream().filter(item -> tempEntity.getId().equals(item.getFrom())).forEach(item->item.setFrom(newNodeId));
+                oldLineList.stream().filter(item -> tempEntity.getId().equals(item.getTo())).forEach(item->item.setTo(newNodeId));
+            }
+            // 修改连线中的工作流Id
+            List<TxrhZhmxLxEntity> lineList = oldLineList.stream().map(item -> {
+                item.setZhmxId(info.getId());
+                item.setId(UUID.randomUUID().toString(true));
+                return item;
+            }).collect(Collectors.toList());
+            zhmxJdService.saveBatch(nodeList);
+            zhmxLxService.saveBatch(lineList);
+        }
+        return false;
     }
 }

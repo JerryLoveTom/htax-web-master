@@ -28,5 +28,14 @@ public interface TxrhMxZhmxService extends IService<TxrhMxZhmxEntity> {
 
     // 通过组合模型id获取模型、节点及连线信息
     WorkFlowDataVo getFlowDataById(String id);
+
+    //保存模型流程信息
+    int saveFlowData(WorkFlowDataVo entity);
+
+    // 删除组合模型及其关联表相关数据
+    boolean deleteZhmxById(String id);
+
+    // 克隆模型信息
+    boolean cloneFlow(String id);
 }
 

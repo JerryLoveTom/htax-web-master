@@ -24,7 +24,7 @@ public class TxrhZhmxLxEntity implements Serializable {
 	/**
 	 *
 	 */
-	@TableId(type = IdType.INPUT)
+	@TableId(type = IdType.ID_WORKER_STR)
 	private String id;
 	/**
 	 * 外键，组合模型的id
