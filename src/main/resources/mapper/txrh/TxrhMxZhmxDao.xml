@@ -29,10 +29,10 @@
             <if test="search.createUser != null and search.createUser != ''">
                 and create_user = #{search.createUser }
             </if>
-            <if test="search.shZt != null and search.shZt != ''">
+            <if test="search.shZt != null ">
                 and sh_zt = #{search.shZt }
             </if>
-            <if test="search.fbZt != null and search.fbZt != ''">
+            <if test="search.fbZt != null ">
                 and fb_zt = #{search.fbZt }
             </if>
             <if test="search.mlJd != null and search.mlJd != ''">
@@ -50,6 +50,31 @@
     <select id="getInfoById" resultType="com.htax.modules.txrh.entity.TxrhMxZhmxEntity">
         select a.*,su.nick_name  from txrh_mx_zhmx a
         left join sys_user su on su.user_id = a.create_user
-        where a.id = #{id}
+        where a.is_delete = 0 and a.id = #{id}
+    </select>
+    <select id="queryPages" resultType="com.htax.modules.txrh.entity.TxrhMxZhmxEntity">
+        select a.*,su.nick_name  from txrh_mx_zhmx a
+        left join sys_user su on su.user_id = a.create_user
+        <where>
+            and a.is_delete = 0
+            <if test="search.mxMc != null and search.mxMc != ''">
+                and a.mx_mc like CONCAT('%',#{search.mxMc},'%')
+            </if>
+            <if test="search.createUser != null and search.createUser != ''">
+                and a.create_user = #{search.createUser }
+            </if>
+            <if test="search.shZt != null">
+                and a.sh_zt = #{search.shZt }
+            </if>
+            <if test="search.fbZt != null">
+                and a.fb_zt = #{search.fbZt }
+            </if>
+            <if test="search.mlJd != null and search.mlJd != ''">
+                and a.ml_jd = #{search.mlJd}
+            </if>
+            <if test="search.nickName != null and search.nickName != ''">
+                and b.nick_name = #{search.nickName}
+            </if>
+        </where>
     </select>
 </mapper>

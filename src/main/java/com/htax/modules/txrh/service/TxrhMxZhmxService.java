@@ -2,6 +2,7 @@ package com.htax.modules.txrh.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.htax.modules.txrh.entity.TxrhMxYzmxEntity;
 import com.htax.modules.txrh.entity.TxrhMxZhmxEntity;
 import com.htax.modules.txrh.entity.vo.NodeMenuVo;
 import com.htax.modules.txrh.entity.vo.WorkFlowDataVo;
@@ -18,7 +19,7 @@ import java.util.List;
  */
 public interface TxrhMxZhmxService extends IService<TxrhMxZhmxEntity> {
     // 带分页，带条件的列表查询
-    Page<TxrhMxZhmxEntity> queryPage(Long current, Long limit, TxrhMxZhmxEntity search);
+    Page<TxrhMxZhmxEntity> queryPages(Long current, Long limit, TxrhMxZhmxEntity search);
 
     // 获取组合模型tree接口模型数据
     List<NodeMenuVo> getTreeList(TxrhMxZhmxEntity search);
@@ -37,5 +38,6 @@ public interface TxrhMxZhmxService extends IService<TxrhMxZhmxEntity> {
 
     // 克隆模型信息
     boolean cloneFlow(String id);
+
 }
 

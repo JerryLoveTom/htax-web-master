@@ -5,7 +5,9 @@ import com.htax.common.utils.Constant;
 import com.htax.common.utils.R;
 import com.htax.modules.sys.controller.AbstractController;
 import com.htax.modules.txrh.entity.TxrhMxYzmxEntity;
+import com.htax.modules.txrh.entity.TxrhMxZhmxEntity;
 import com.htax.modules.txrh.service.TxrhMxYzmxService;
+import com.htax.modules.txrh.service.TxrhMxZhmxService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -28,9 +30,11 @@ import org.springframework.web.bind.annotation.RestController;
 @Api("模型审核")
 public class TxrhMxShController extends AbstractController {
     @Autowired
-    private TxrhMxYzmxService txrhMxYzmxService;
+    private TxrhMxYzmxService txrhMxYzmxService; // 原子模型
+    @Autowired
+    private TxrhMxZhmxService txrhMxZhmxService; // 工作流（组合模型）
     /**
-     * 列表
+     * 原子模型列表
      */
     @GetMapping("/list/{current}/{limit}")
     @ApiOperation("原子模型审核列表")
@@ -46,6 +50,25 @@ public class TxrhMxShController extends AbstractController {
             }
         }
         Page<TxrhMxYzmxEntity> page = txrhMxYzmxService.queryPages(current, limit, search);
+        return R.ok().put("page", page);
+    }
+    /**
+     * 工作流（组合模型）
+     * */
+    @GetMapping("/zhmx/list/{current}/{limit}")
+    @ApiOperation("工作流（组合模型）审核列表")
+    public R workFlowList(@ApiParam(name = "current",value = "当前页码") @PathVariable Long current
+            , @ApiParam(name = "limit",value = "每页记录数")@PathVariable Long limit
+            ,  TxrhMxZhmxEntity search){
+        if(getUserId() != Constant.SUPER_ADMIN){
+            if (getUser().getRoleIdList() == null){
+                return R.error("没有权限");
+            }
+            if (getUser().getRoleIdList().contains(Constant.MXYHJS_ID)){
+                search.setCreateUser(getUserId());
+            }
+        }
+        Page<TxrhMxZhmxEntity> page = txrhMxZhmxService.queryPages(current, limit, search);
         return R.ok().put("page", page);
     }
 }

@@ -1,5 +1,6 @@
 package com.htax.modules.txrh.dao;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.htax.modules.txrh.entity.TxrhMxZhmxEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
@@ -21,4 +22,6 @@ public interface TxrhMxZhmxDao extends BaseMapper<TxrhMxZhmxEntity> {
 
     // 获取组合模型信息，包含创建者名称
     TxrhMxZhmxEntity getInfoById(@Param("id") String id);
+
+    Page<TxrhMxZhmxEntity> queryPages(Page<TxrhMxZhmxEntity> page, @Param("search") TxrhMxZhmxEntity search);
 }

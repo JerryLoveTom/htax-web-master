@@ -2,6 +2,7 @@ package com.htax.modules.txrh.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.htax.common.utils.uuid.IdUtils;
 import com.htax.common.utils.uuid.UUID;
 import com.htax.modules.txrh.entity.TxrhZhmxJdEntity;
 import com.htax.modules.txrh.entity.TxrhZhmxLxEntity;
@@ -33,15 +34,15 @@ public class TxrhMxZhmxServiceImpl extends ServiceImpl<TxrhMxZhmxDao, TxrhMxZhmx
     private TxrhZhmxLxService zhmxLxService;// 连线
     // 带分页，带条件的列表查询
     @Override
-    public Page<TxrhMxZhmxEntity>  queryPage(Long current, Long limit, TxrhMxZhmxEntity search) {
+    public Page<TxrhMxZhmxEntity>  queryPages(Long current, Long limit, TxrhMxZhmxEntity search) {
         Page<TxrhMxZhmxEntity> page = new Page<>(current,limit);
-        QueryWrapper<TxrhMxZhmxEntity> queryWrapper = new QueryWrapper<>();
+       /* QueryWrapper<TxrhMxZhmxEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.like(StringUtil.isNotEmpty(search.getMxMc()), "mx_mc", search.getMxMc());
         queryWrapper.eq(search.getFbZt() != null, "fb_zt",search.getFbZt());
         queryWrapper.eq(search.getShZt() != null, "sh_zt",search.getShZt());
         queryWrapper.eq(search.getCreateUser()!=null, "create_user", search.getCreateUser());
-        queryWrapper.orderByDesc("update_time");
-        return baseMapper.selectPage(page, queryWrapper);
+        queryWrapper.orderByDesc("update_time");*/
+        return baseMapper.queryPages(page, search);
     }
     // 获取组合模型tree接口模型数据
     @Override
@@ -156,7 +157,6 @@ public class TxrhMxZhmxServiceImpl extends ServiceImpl<TxrhMxZhmxDao, TxrhMxZhmx
         info.setId(null);// 因为是新增，所以id要为空
         info.setMxMc(info.getMxMc() + "-副本");
         this.save(info);// 保存信息，并返回info的Id
-        System.out.println("info = " + info);
         // 2、查询节点信息并赋值给新list
         List<TxrhZhmxJdEntity> oldNodeList = zhmxJdService.list(new QueryWrapper<TxrhZhmxJdEntity>().eq("zhmx_id", id));
         // 3、查询连线信息并赋值给新list
@@ -169,7 +169,7 @@ public class TxrhMxZhmxServiceImpl extends ServiceImpl<TxrhMxZhmxDao, TxrhMxZhmx
                 TxrhZhmxJdEntity node = new TxrhZhmxJdEntity();
                 BeanUtils.copyProperties(tempEntity, node);
                 // 节点的新id
-                String newNodeId = UUID.randomUUID().toString(true);
+                String newNodeId = IdUtils.simpleUUID();
                 node.setId(newNodeId);
                 node.setZhmxId(info.getId());
                 nodeList.add(node);
@@ -180,12 +180,12 @@ public class TxrhMxZhmxServiceImpl extends ServiceImpl<TxrhMxZhmxDao, TxrhMxZhmx
             // 修改连线中的工作流Id
             List<TxrhZhmxLxEntity> lineList = oldLineList.stream().map(item -> {
                 item.setZhmxId(info.getId());
-                item.setId(UUID.randomUUID().toString(true));
+                item.setId(IdUtils.simpleUUID());
                 return item;
             }).collect(Collectors.toList());
             zhmxJdService.saveBatch(nodeList);
             zhmxLxService.saveBatch(lineList);
         }
-        return false;
+        return true;
     }
 }

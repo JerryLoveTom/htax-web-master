@@ -38,10 +38,10 @@
             <if test="yzmx.createUser != null and yzmx.createUser != ''">
                 and create_user = #{yzmx.createUser }
             </if>
-            <if test="yzmx.shZt != null and yzmx.shZt != ''">
+            <if test="yzmx.shZt != null">
                 and sh_zt = #{yzmx.shZt }
             </if>
-            <if test="yzmx.fbZt != null and yzmx.fbZt != ''">
+            <if test="yzmx.fbZt != null">
                 and fb_zt = #{yzmx.fbZt }
             </if>
             <if test="yzmx.mlJd != null and yzmx.mlJd != ''">
@@ -65,10 +65,10 @@
             <if test="yzmx.createUser != null and yzmx.createUser != ''">
                 and create_user = #{yzmx.createUser }
             </if>
-            <if test="yzmx.shZt != null and yzmx.shZt != ''">
+            <if test="yzmx.shZt != null">
                 and sh_zt = #{yzmx.shZt }
             </if>
-            <if test="yzmx.fbZt != null and yzmx.fbZt != ''">
+            <if test="yzmx.fbZt != null">
                 and fb_zt = #{yzmx.fbZt }
             </if>
             <if test="yzmx.mlJd != null and yzmx.mlJd != ''">

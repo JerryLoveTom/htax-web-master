@@ -184,7 +184,7 @@ public class TxrhMxYzmxServiceImpl  extends ServiceImpl<TxrhMxYzmxDao, TxrhMxYzm
                 vo.setId(i.getId());
                 vo.setPid(i.getPid());
                 vo.setName(i.getMxMc());
-                vo.setType(UUID.fastUUID().toString());
+                vo.setType(UUID.fastUUID().toString(true));
                 if ("0".equals(i.getPid())){
                     vo.setIco("el-icon-video-pause");
                     vo.setOpen(true);

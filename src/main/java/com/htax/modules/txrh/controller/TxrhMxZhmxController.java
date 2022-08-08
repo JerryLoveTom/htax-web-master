@@ -9,10 +9,12 @@ import com.htax.modules.sys.controller.AbstractController;
 import com.htax.modules.txrh.entity.TxrhMxYzmxEntity;
 import com.htax.modules.txrh.entity.vo.NodeMenuVo;
 import com.htax.modules.txrh.entity.vo.WorkFlowDataVo;
+import com.htax.modules.txrh.entity.vo.YzmxVo;
 import com.htax.modules.txrh.service.TxrhMxYzmxService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,12 +40,16 @@ public class TxrhMxZhmxController extends AbstractController {
     @Autowired
     private TxrhMxYzmxService txrhMxYzmxService; // 原子模型
 
+    /**
+     * 克隆模型信息
+     * */
     @GetMapping("/clone/{id}")
     @ApiOperation("克隆模型信息")
     public R clone(@PathVariable("id") String id){
         boolean success = txrhMxZhmxService.cloneFlow(id);
         return R.ok();
     }
+
     // 保存模型流程信息
     @PostMapping("/flowdata")
     @ApiOperation("保存模型流程信息")
@@ -51,6 +57,7 @@ public class TxrhMxZhmxController extends AbstractController {
         int result = txrhMxZhmxService.saveFlowData(entity);
         return R.ok();
     }
+
     // 通过Id 获取组合模型的连线、节点信息
     @GetMapping("/flowdata/{id}")
     @ApiOperation("通过Id 获取组合模型的连线、节点信息")
@@ -58,6 +65,7 @@ public class TxrhMxZhmxController extends AbstractController {
         WorkFlowDataVo item = txrhMxZhmxService.getFlowDataById(id);
         return R.ok().put("item",item);
     }
+
     /**
      * 获取左侧模型树：可能包含 1.原子模型 2.输入数据源 3.输出
      * */
@@ -94,21 +102,6 @@ public class TxrhMxZhmxController extends AbstractController {
     }
 
     /**
-     * 列表
-     */
-    @GetMapping("/list/{current}/{limit}")
-    @ApiOperation("列表")
-    public R list(@ApiParam(name = "current",value = "当前页码") @PathVariable Long current
-            , @ApiParam(name = "limit",value = "每页记录数")@PathVariable Long limit
-            ,TxrhMxZhmxEntity search){
-        Page<TxrhMxZhmxEntity> page = txrhMxZhmxService.queryPage(current, limit, search);
-
-        return R.ok().put("page", page);
-    }
-
-
-
-    /**
      * 信息
      */
     @GetMapping("/info/{id}")
@@ -132,6 +125,9 @@ public class TxrhMxZhmxController extends AbstractController {
             if (getUser().getRoleIdList().contains(Constant.MXYHJS_ID)){
                 txrhMxZhmx.setCreateUser(getUserId());
             }
+        }else { // 如果是超级管理员，创建的信息直接就能被人看到不需要在提交审核
+            txrhMxZhmx.setShZt(2);
+            txrhMxZhmx.setFbZt(1);
         }
 		txrhMxZhmxService.save(txrhMxZhmx);
 
