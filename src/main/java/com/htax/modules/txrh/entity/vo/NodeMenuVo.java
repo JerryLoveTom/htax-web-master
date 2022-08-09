@@ -41,6 +41,14 @@ public class NodeMenuVo implements DataTree<NodeMenuVo> {
      * */
     private Object style;
     /**
+     * 种类：0 数据源  1 模型  2 输出
+     * */
+    private String mold;
+    /**
+     * 如果是数据源，则是源名称
+     * */
+    private String sourceName;
+    /**
      * 是否展开
      * */
     private Boolean open;

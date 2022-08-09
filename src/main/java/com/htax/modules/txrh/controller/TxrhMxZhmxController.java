@@ -1,20 +1,17 @@
 package com.htax.modules.txrh.controller;
 
-import java.util.Arrays;
 import java.util.List;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.htax.common.utils.Constant;
 import com.htax.modules.sys.controller.AbstractController;
 import com.htax.modules.txrh.entity.TxrhMxYzmxEntity;
 import com.htax.modules.txrh.entity.vo.NodeMenuVo;
 import com.htax.modules.txrh.entity.vo.WorkFlowDataVo;
-import com.htax.modules.txrh.entity.vo.YzmxVo;
+import com.htax.modules.txrh.service.TxrhDbSourceService;
 import com.htax.modules.txrh.service.TxrhMxYzmxService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,6 +36,18 @@ public class TxrhMxZhmxController extends AbstractController {
     private TxrhMxZhmxService txrhMxZhmxService;// 组合模型
     @Autowired
     private TxrhMxYzmxService txrhMxYzmxService; // 原子模型
+    @Autowired
+    private TxrhDbSourceService txrhDbSourceService; // 数据源
+
+    /**
+     * 工作流运行
+     * */
+    @GetMapping("/startflow/{id}")
+    @ApiOperation("通过id执行工作流")
+    public R runWorkFlow(@PathVariable("id") String id){
+        txrhMxZhmxService.runWorkFlow(id);
+        return R.ok();
+    }
 
     /**
      * 克隆模型信息
@@ -80,9 +89,11 @@ public class TxrhMxZhmxController extends AbstractController {
                 search.setCreateUser(getUserId());
             }
         }
-        List<NodeMenuVo> tree = txrhMxYzmxService.getTreeList(search);
+        List<NodeMenuVo> dataSourceTree = txrhDbSourceService.getTreeList(search);
+        List<NodeMenuVo> yzmxtree = txrhMxYzmxService.getTreeList(search);
+        dataSourceTree.addAll(yzmxtree);
         // 两个list 合并  list1.addAll(list2)  或者通过流合并
-        return R.ok().put("items",tree);
+        return R.ok().put("items",dataSourceTree);
     }
 
     @GetMapping("/zhtreelist")

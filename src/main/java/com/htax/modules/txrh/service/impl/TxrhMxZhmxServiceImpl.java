@@ -3,14 +3,12 @@ package com.htax.modules.txrh.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.htax.common.utils.uuid.IdUtils;
-import com.htax.common.utils.uuid.UUID;
 import com.htax.modules.txrh.entity.TxrhZhmxJdEntity;
 import com.htax.modules.txrh.entity.TxrhZhmxLxEntity;
 import com.htax.modules.txrh.entity.vo.NodeMenuVo;
 import com.htax.modules.txrh.entity.vo.WorkFlowDataVo;
 import com.htax.modules.txrh.service.TxrhZhmxJdService;
 import com.htax.modules.txrh.service.TxrhZhmxLxService;
-import dm.jdbc.util.StringUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -154,7 +152,9 @@ public class TxrhMxZhmxServiceImpl extends ServiceImpl<TxrhMxZhmxDao, TxrhMxZhmx
         TxrhMxZhmxEntity zhmxInfo = this.getById(id);
         TxrhMxZhmxEntity info = new TxrhMxZhmxEntity();
         BeanUtils.copyProperties(zhmxInfo,info);
-        info.setId(null);// 因为是新增，所以id要为空
+        info.setId(null); // 因为是新增，所以id要为空
+        info.setFbZt(0); // 发布状态
+        info.setShZt(0); // 审核状态
         info.setMxMc(info.getMxMc() + "-副本");
         this.save(info);// 保存信息，并返回info的Id
         // 2、查询节点信息并赋值给新list
@@ -187,5 +187,16 @@ public class TxrhMxZhmxServiceImpl extends ServiceImpl<TxrhMxZhmxDao, TxrhMxZhmx
             zhmxLxService.saveBatch(lineList);
         }
         return true;
+    }
+
+    // 通过id执行工作流
+    @Override
+    public void runWorkFlow(String id) {
+        // 1.首先获取改工作流中的所有节点及节点连线
+        TxrhMxZhmxEntity info = this.getById(id); // 获取工作流基础信息
+        List<TxrhZhmxJdEntity> nodeList = zhmxJdService.list(new QueryWrapper<TxrhZhmxJdEntity>().eq("zhmx_id", id)); // 获取节点列表
+        List<TxrhZhmxLxEntity> lineList = zhmxLxService.list(new QueryWrapper<TxrhZhmxLxEntity>().eq("zhmx_id", id)); // 获取连线列表
+        // 2.找出起点
+
     }
 }

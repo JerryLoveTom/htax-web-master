@@ -14,6 +14,7 @@
         <result property="top" column="top"/>
         <result property="ico" column="ico"/>
         <result property="state" column="state"/>
+        <result property="mold" column="mold"/>
     </resultMap>
 
 

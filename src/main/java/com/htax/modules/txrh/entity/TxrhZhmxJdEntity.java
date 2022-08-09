@@ -63,5 +63,9 @@ public class TxrhZhmxJdEntity implements Serializable {
 	 * 状态
 	 */
 	private String state;
+	/**
+	 * 种类：0 数据源  1 模型  2 输出
+	 * */
+	private String mold;
 
 }

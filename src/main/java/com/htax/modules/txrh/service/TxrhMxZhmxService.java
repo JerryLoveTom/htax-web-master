@@ -2,7 +2,6 @@ package com.htax.modules.txrh.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.htax.modules.txrh.entity.TxrhMxYzmxEntity;
 import com.htax.modules.txrh.entity.TxrhMxZhmxEntity;
 import com.htax.modules.txrh.entity.vo.NodeMenuVo;
 import com.htax.modules.txrh.entity.vo.WorkFlowDataVo;
@@ -39,5 +38,7 @@ public interface TxrhMxZhmxService extends IService<TxrhMxZhmxEntity> {
     // 克隆模型信息
     boolean cloneFlow(String id);
 
+    // 通过id执行工作流
+    void runWorkFlow(String id);
 }
 

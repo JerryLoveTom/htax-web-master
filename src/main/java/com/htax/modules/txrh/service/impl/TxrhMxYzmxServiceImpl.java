@@ -3,6 +3,7 @@ package com.htax.modules.txrh.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.htax.common.utils.uuid.IdUtils;
 import com.htax.common.utils.uuid.UUID;
 import com.htax.modules.txrh.dao.TxrhMxYzmxDao;
 import com.htax.modules.txrh.entity.TxrhMxYzmxEntity;
@@ -156,10 +157,10 @@ public class TxrhMxYzmxServiceImpl  extends ServiceImpl<TxrhMxYzmxDao, TxrhMxYzm
         if (yzmxList.size() > 0){
             yzmxList.stream().forEach(i -> {
                 SelectOptionVo vo = new SelectOptionVo();
-                vo.setId(i.getId().toString());
+                vo.setId(i.getId());
                 vo.setPid(i.getPid());
                 vo.setLabel(i.getMxMc());
-                vo.setValue(i.getId().toString());
+                vo.setValue(i.getId());
                 list.add(vo);
             });
         // List<SelectOptionVo>vos = TreeUtils.getTreeList("0",list);
@@ -184,7 +185,8 @@ public class TxrhMxYzmxServiceImpl  extends ServiceImpl<TxrhMxYzmxDao, TxrhMxYzm
                 vo.setId(i.getId());
                 vo.setPid(i.getPid());
                 vo.setName(i.getMxMc());
-                vo.setType(UUID.fastUUID().toString(true));
+                vo.setType(IdUtils.simpleUUID());
+                vo.setMold("1");
                 if ("0".equals(i.getPid())){
                     vo.setIco("el-icon-video-pause");
                     vo.setOpen(true);
