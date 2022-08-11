@@ -7,15 +7,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.htax.common.utils.Constant;
 import com.htax.common.utils.uuid.UUID;
 import com.htax.modules.sys.controller.AbstractController;
 import com.htax.modules.txrh.entity.TxrhMxYzmxEntity;
+import com.htax.modules.txrh.entity.TxrhYzmxCcsEntity;
+import com.htax.modules.txrh.entity.TxrhYzmxRcsEntity;
+import com.htax.modules.txrh.entity.TxrhZhmxJdCsdzEntity;
 import com.htax.modules.txrh.entity.vo.NodeMenuVo;
 import com.htax.modules.txrh.entity.vo.SelectOptionVo;
 import com.htax.modules.txrh.entity.vo.YzmxVo;
 import com.htax.modules.txrh.service.TxrhMxYzmxService;
+import com.htax.modules.txrh.service.TxrhYzmxCcsService;
+import com.htax.modules.txrh.service.TxrhYzmxRcsService;
+import com.htax.modules.txrh.service.TxrhZhmxJdCsdzService;
 import com.htax.modules.txrh.utils.FuncPyModelUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -47,9 +54,52 @@ import javax.xml.xpath.XPathFactory;
 public class TxrhMxYzmxController  extends AbstractController {
     @Autowired
     private TxrhMxYzmxService txrhMxYzmxService;
+    @Autowired
+    private TxrhYzmxCcsService yzmxCcsService;
+    @Autowired
+    private TxrhYzmxRcsService yzmxRcsService;
+    @Autowired
+    private TxrhZhmxJdCsdzService zhmxJdCsdzService;
     @Value("${htax.testing}")
     private String url;
 
+    // 根据原子模型id、节点Id查询输入输出参数
+    @GetMapping("/getcs/{type}/{yzmxid}/{nodeId}")
+    @ApiOperation("根据原子模型id查询输入或输出参数")
+    public R getParams(@PathVariable("type")String type
+            ,@PathVariable("yzmxid") String yzmxid
+            ,@PathVariable("nodeId") String nodeId){
+        if ("1".equals(type)){ // 入参
+            // 获取入参信息
+            List<TxrhYzmxRcsEntity> list = yzmxRcsService.list(new QueryWrapper<TxrhYzmxRcsEntity>()
+                    .select("*,(case cs_lx when 0 then 'int' when 1 then 'String' when 2 then 'boolen' when 3 then 'list' when 4 then 'float' else '其他' end)csLxMc")
+                    .eq("mx_id", yzmxid));
+            // 获取入参是否绑定了其他参数
+            List<TxrhZhmxJdCsdzEntity> jdCsdzEntityList = zhmxJdCsdzService.list(new QueryWrapper<TxrhZhmxJdCsdzEntity>()
+                    .eq("to_node",nodeId));
+            if (jdCsdzEntityList.size() > 0){
+                jdCsdzEntityList.forEach(item -> {
+                    for (int i = 0; i < list.size(); i++) {
+                        if (list.get(i).getId().equals(item.getToParam())){
+                            list.get(i).setFromNode(item.getFromNode());
+                            if ("0".equals(item.getFromType())) {
+                                list.get(i).setFromColumnName(item.getFromColumnName());
+                            }else if("1".equals(item.getFromType())){
+                                list.get(i).setFromColumnName(item.getFromParam().toString());
+                            }
+                        }
+                    }
+                });
+            }
+            return R.ok().put("items",list);
+        }else if("2".equals(type)){
+            List<TxrhYzmxCcsEntity> list = yzmxCcsService.list(new QueryWrapper<TxrhYzmxCcsEntity>()
+                    .select("*,(case cs_lx when 0 then 'int' when 1 then 'String' when 2 then 'boolen' when 3 then 'list' when 4 then 'float' else '其他' end)csLxMc")
+                    .eq("mx_id", yzmxid));
+            return R.ok().put("items",list);
+        }
+        return R.error("请求异常，请检查参数");
+    }
     @GetMapping("/testxml")
     @ApiOperation("测试")
     public R xml() throws IOException, XPathExpressionException {

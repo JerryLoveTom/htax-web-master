@@ -21,4 +21,6 @@ public class TxrhDBTabelVo {
     private String columnComment;
     private String columnKey;
     private String extra;
+    private String id; // 参数id
+    private String csZwMc; // 参数中文名
 }

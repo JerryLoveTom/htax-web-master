@@ -42,6 +42,11 @@ public class TxrhYzmxCcsEntity implements Serializable {
 	 */
 	private String csLx;
 	/**
+	 * 参数类型名称
+	 * */
+	@TableField(exist = false)
+	private String csLxMc;
+	/**
 	 * 方法运行总耗时
 	 */
 	private Integer yxHs;

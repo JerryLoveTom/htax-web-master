@@ -1,10 +1,8 @@
 package com.htax.modules.txrh.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.htax.common.utils.PageUtils;
 import com.htax.modules.txrh.entity.TxrhZhmxLxEntity;
 
-import java.util.Map;
 
 /**
  * 组合模型中原子模型的连线
@@ -15,6 +13,5 @@ import java.util.Map;
  */
 public interface TxrhZhmxLxService extends IService<TxrhZhmxLxEntity> {
 
-    PageUtils queryPage(Map<String, Object> params);
 }
 

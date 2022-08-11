@@ -1,10 +1,10 @@
 package com.htax.modules.txrh.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.htax.common.utils.PageUtils;
 import com.htax.modules.txrh.entity.TxrhZhmxJdEntity;
 
-import java.util.Map;
+import java.util.List;
+
 
 /**
  * 组合模型节点信息
@@ -15,6 +15,5 @@ import java.util.Map;
  */
 public interface TxrhZhmxJdService extends IService<TxrhZhmxJdEntity> {
 
-    PageUtils queryPage(Map<String, Object> params);
 }
 

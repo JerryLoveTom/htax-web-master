@@ -1,13 +1,15 @@
 package com.htax.modules.txrh.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.htax.common.constant.Constants;
 import com.htax.common.utils.R;
 import com.htax.modules.txrh.entity.TxrhDbSourceEntity;
-import com.htax.modules.txrh.entity.vo.SelectOptionVo;
+import com.htax.modules.txrh.entity.TxrhZhmxJdSjyEntity;
 import com.htax.modules.txrh.entity.vo.TxrhDBTabelVo;
 import com.htax.modules.txrh.service.TxrhDBService;
 import com.htax.modules.txrh.service.TxrhDbSourceService;
+import com.htax.modules.txrh.service.TxrhZhmxJdSjyService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -16,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @BelongsProject: htax-web-master
@@ -34,7 +35,8 @@ public class TxrhDBController {
     private TxrhDbSourceService txrhDbSourceService; // 数据源
     @Autowired
     private TxrhDBService dbService; // 表
-
+    @Autowired
+    private TxrhZhmxJdSjyService zhmxJdSjyService;// 数据源服务
 
     @GetMapping("/source/list/{current}/{limit}")
     @ApiOperation("获取数据源列表")
@@ -81,27 +83,48 @@ public class TxrhDBController {
         }
         return R.ok().put("items",list);
     }
-    @GetMapping("/table/columnname/{sourceid}/{tablename}")
+    @GetMapping("/table/columnname")
     @ApiOperation("根据数据源和表名获取表属性字段信息")
-    public R queryColumnName(@PathVariable("sourceid") String sourceid
-            ,@PathVariable("tablename") String tablename){
-        List<TxrhDBTabelVo>list = new ArrayList<>();
-
-        switch (sourceid){
-            case  Constants.DATASOURCE_MASTER:
-                list = dbService.masterQueryColumns(tablename);
-                break;
-            case Constants.DATASOURCE_SLAVE1:
-                list = dbService.slave1QueryColumns(tablename);
-                break;
-            case Constants.DATASOURCE_SLAVE2:
-                list = dbService.slave2QueryColumns(tablename);
-                break;
-            default:
-                list = dbService.masterQueryColumns(tablename);
-                break;
+    public R queryColumnName(TxrhZhmxJdSjyEntity vo){
+        List<TxrhDBTabelVo>list = getTableColumns(vo);
+        // 保存信息
+        if ("1".equals(vo.getOperate())){
+            zhmxJdSjyService.remove(new QueryWrapper<TxrhZhmxJdSjyEntity>().eq("jd_id",vo.getJdId()));
+            zhmxJdSjyService.save(vo);
+        }
+        return R.ok().put("items",list);
+    }
+    /**
+     * 根据节点id 获取组合模型节点数据源表中数据
+     * */
+    @GetMapping("/column/{jdId}")
+    @ApiOperation("查询当前节点已配置参数")
+    public R getJdsjy(@PathVariable("jdId") String jdId){
+        TxrhZhmxJdSjyEntity vo = zhmxJdSjyService.getOne(new QueryWrapper<TxrhZhmxJdSjyEntity>().eq("jd_id", jdId).last("limit 1"));
+        List<TxrhDBTabelVo> list = getTableColumns(vo);
+        if (list.size()>0){
+            list.forEach(item -> {
+                item.setId(item.getColumnName());
+                item.setCsZwMc(item.getColumnComment());
+            });
         }
         return R.ok().put("items",list);
     }
 
+    // 根据参数分别调用不同的数据源查询
+    private List<TxrhDBTabelVo> getTableColumns(TxrhZhmxJdSjyEntity vo) {
+        List<TxrhDBTabelVo>list;
+        switch (vo.getDbId()){
+            case Constants.DATASOURCE_SLAVE1:
+                list = dbService.slave1QueryColumns(vo.getTableName());
+                break;
+            case Constants.DATASOURCE_SLAVE2:
+                list = dbService.slave2QueryColumns(vo.getTableName());
+                break;
+            default:
+                list = dbService.masterQueryColumns(vo.getTableName());
+                break;
+        }
+        return list;
+    }
 }

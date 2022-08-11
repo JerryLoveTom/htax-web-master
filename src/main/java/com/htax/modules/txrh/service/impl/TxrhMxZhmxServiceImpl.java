@@ -30,6 +30,7 @@ public class TxrhMxZhmxServiceImpl extends ServiceImpl<TxrhMxZhmxDao, TxrhMxZhmx
     private TxrhZhmxJdService zhmxJdService; // 节点
     @Autowired
     private TxrhZhmxLxService zhmxLxService;// 连线
+
     // 带分页，带条件的列表查询
     @Override
     public Page<TxrhMxZhmxEntity>  queryPages(Long current, Long limit, TxrhMxZhmxEntity search) {
@@ -199,4 +200,19 @@ public class TxrhMxZhmxServiceImpl extends ServiceImpl<TxrhMxZhmxDao, TxrhMxZhmx
         // 2.找出起点
 
     }
+
+    // 获取当前节点的上级节点
+    @Override
+    public List<TxrhZhmxJdEntity> getFromJdByToId(String toId) {
+        // 通过连线，获取所有的上级节点
+        List<TxrhZhmxLxEntity> lineList = zhmxLxService.list(new QueryWrapper<TxrhZhmxLxEntity>().eq("`to`", toId));
+        if (lineList.size()>0){
+            List<String> fromIds = lineList.stream().map(TxrhZhmxLxEntity::getFrom).collect(Collectors.toList());
+            // 通过上级节点id ,获取所有节点信息
+            List<TxrhZhmxJdEntity> nodeList = zhmxJdService.list(new QueryWrapper<TxrhZhmxJdEntity>().in("id", fromIds));
+            return nodeList;
+        }
+        return null;
+    }
+
 }

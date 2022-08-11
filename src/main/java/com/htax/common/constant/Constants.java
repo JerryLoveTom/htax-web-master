@@ -10,6 +10,15 @@ import io.jsonwebtoken.Claims;
 public class Constants
 {
     /**
+     * 多数据源时判断数据源
+     * */
+    // 主库
+    public static final String DATASOURCE_MASTER = "4";
+    // 从1
+    public static final String DATASOURCE_SLAVE1 = "2";
+    // 从2
+    public static final String DATASOURCE_SLAVE2 = "3";
+    /**
      * UTF-8 字符集
      */
     public static final String UTF8 = "UTF-8";

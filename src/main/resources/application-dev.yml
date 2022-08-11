@@ -39,20 +39,18 @@ spring:
 
 
 #多数据源的配置
-#dynamic:
-#  datasource:
-#    slave1:
-#      driver-class-name: dm.jdbc.driver.DmDriver
-#      url: jdbc:dm://192.168.1.250:5236/ENSURE
-      # mysql有longtext text blog等大数据库类型，迁移到达梦 一般会转换为clob类型，查询时会报类型转换异常，在url后面添加配置将clob当作string处理；
-#      url: jdbc:dm://192.168.1.250:5236?schema=ENSURE&compatibleMode=mysql&characterEncoding=UTF-8&useUnicode=true&useSSL=false&tinyInt1isBit=false&allowPublicKeyRetrieval=true&serverTimezone=Asiz/Shanghai
-#      username: ENSURE
-#      password: EN123456789
+dynamic:
+  datasource:
+    slave1:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://localhost:3306/htax_test?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+      username: root
+      password: 403949009
 
-#    slave2:
-#      driver-class-name: com.mysql.cj.jdbc.Driver
-#      url: jdbc:mysql://localhost:3306/htax_base?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
-#      username: root
-#      password: root
+    slave2:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://localhost:3306/htax_test2?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+      username: root
+      password: 403949009
 elasticsearch:
     url: http://127.0.0.1:9200

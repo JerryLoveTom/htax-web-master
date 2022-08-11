@@ -1,22 +1,22 @@
 package com.htax.modules.txrh.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.htax.common.utils.Constant;
 import com.htax.modules.sys.controller.AbstractController;
-import com.htax.modules.txrh.entity.TxrhMxYzmxEntity;
+import com.htax.modules.txrh.entity.*;
 import com.htax.modules.txrh.entity.vo.NodeMenuVo;
+import com.htax.modules.txrh.entity.vo.ParamFormVo;
 import com.htax.modules.txrh.entity.vo.WorkFlowDataVo;
-import com.htax.modules.txrh.service.TxrhDbSourceService;
-import com.htax.modules.txrh.service.TxrhMxYzmxService;
+import com.htax.modules.txrh.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import com.htax.modules.txrh.entity.TxrhMxZhmxEntity;
-import com.htax.modules.txrh.service.TxrhMxZhmxService;
 import com.htax.common.utils.R;
 
 
@@ -38,7 +38,53 @@ public class TxrhMxZhmxController extends AbstractController {
     private TxrhMxYzmxService txrhMxYzmxService; // 原子模型
     @Autowired
     private TxrhDbSourceService txrhDbSourceService; // 数据源
+    @Autowired
+    private TxrhZhmxJdSjyService zhmxJdSjyService;// 数据源服务
+    @Autowired
+    private TxrhZhmxJdCsdzService zhmxJdCsdzService; // 节点参数对照
 
+
+    @PostMapping("/jdcsdz")
+    @ApiOperation("查询当前节点已配置参数")
+    public R saveJdCsdz(@RequestBody ParamFormVo vo){
+        vo.getToParams().forEach(item ->{
+            if ("1".equals(item.getFromType())){
+                item.setFromParam(Long.parseLong(item.getFromColumnName()));
+                item.setFromColumnName(null);
+            }
+        });
+        // 先移除to_node
+        zhmxJdCsdzService.remove(new QueryWrapper<TxrhZhmxJdCsdzEntity>().eq("to_node",vo.getToParams().get(0).getToNode()));
+        zhmxJdCsdzService.saveBatch( vo.getToParams());
+        return R.ok();
+    }
+    /**
+     * 查询当前节点已配置参数
+     * */
+    @GetMapping("/getsetparams/{toId}")
+    @ApiOperation("查询当前节点已配置参数")
+    public R getSetParams(@PathVariable("toId") String toId){
+        List<TxrhZhmxJdCsdzEntity> list = zhmxJdCsdzService.list(new QueryWrapper<TxrhZhmxJdCsdzEntity>().eq("to_node",toId));
+        return R.ok().put("items",list);
+    }
+    /**
+     * 查询当前节点的上级节点
+     * */
+    @GetMapping("/getfromjd/{toId}")
+    @ApiOperation("获取数据源绑定的表信息")
+    public R getFromjd(@PathVariable("toId") String toId){
+        List<TxrhZhmxJdEntity> list = txrhMxZhmxService.getFromJdByToId(toId);
+        return R.ok().put("items",list);
+    }
+    /**
+     * 获取数据源绑定的表信息
+     * */
+    @GetMapping("/source/bind/{sourceid}")
+    @ApiOperation("获取数据源绑定的表信息")
+    public R getSourceBindInfo(@PathVariable("sourceid") String sourceid){
+        TxrhZhmxJdSjyEntity jdSjyEntity = zhmxJdSjyService.getOne(new QueryWrapper<TxrhZhmxJdSjyEntity>().eq("jd_id", sourceid).last("limit 1"));
+        return R.ok().put("item",jdSjyEntity);
+    }
     /**
      * 工作流运行
      * */

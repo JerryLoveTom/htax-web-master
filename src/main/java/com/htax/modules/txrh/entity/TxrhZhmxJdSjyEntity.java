@@ -9,15 +9,15 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 原子算法入参参数表
+ * 组合模型节点数据源
  *
  * @author ppzz
  * @email 171712007@qq.com
- * @date 2022-08-02 19:56:55
+ * @date 2022-08-09 15:13:52
  */
 @Data
-@TableName("txrh_yzmx_rcs")
-public class TxrhYzmxRcsEntity implements Serializable {
+@TableName("txrh_zhmx_jd_sjy")
+public class TxrhZhmxJdSjyEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -26,31 +26,38 @@ public class TxrhYzmxRcsEntity implements Serializable {
 	@TableId
 	private Long id;
 	/**
-	 * 外键，模型ID
+	 * 外键，节点编号 txrh_zhmx_jd
 	 */
-	private String mxId;
+	private String jdId;
 	/**
-	 * 参数中文名称
+	 * 外键，组合模型编号 txrh_mx_zhmx
 	 */
-	private String csZwMc;
+	private String zhmxId;
 	/**
-	 * 参数英文名称
+	 * 外键，数据源id txrh_db_source
 	 */
-	private String csYwMc;
+	private String dbId;
 	/**
-	 * 参数类型:0.int 1.string 2.boolen 3.list 4.float
-	 */
-	private String csLx;
-	/**
-	 * 参数类型名称
+	 * 操作
 	 * */
 	@TableField(exist = false)
-	private String csLxMc;
+	private String operate;
 	/**
-	 * 方法运行总耗时
+	 * 数据库表名
 	 */
-	private Integer yxHs;
-	@TableLogic(value = "0",delval = "1") // 逻辑删除 新版本只需要加入这个，不需要进行config配置
+	private String tableName;
+	/**
+	 * 数据源条件
+	 */
+	@TableField("`condition`")
+	private String condition;
+
+	/**
+	 * 创建人
+	 */
+	private Long createUser;
+
+	// @TableLogic(value = "0",delval = "1") // 逻辑删除 新版本只需要加入这个，不需要进行config配置
 	@ApiModelProperty(value = "逻辑删除 1（true）已删除， 0（false）未删除")
 	private Boolean isDelete;
 
@@ -61,11 +68,5 @@ public class TxrhYzmxRcsEntity implements Serializable {
 	@ApiModelProperty(value = "更新时间")
 	@TableField(fill = FieldFill.INSERT_UPDATE)
 	private Date updateTime;
-
-	@TableField(exist = false)
-	private String fromNode;
-	@TableField(exist = false)
-	private String fromColumnName;
-
 
 }
