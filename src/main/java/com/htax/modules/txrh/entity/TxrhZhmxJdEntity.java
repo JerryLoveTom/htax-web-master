@@ -68,4 +68,8 @@ public class TxrhZhmxJdEntity implements Serializable {
 	 * */
 	private String mold;
 
+	// 是否已经执行
+	@TableField(exist = false)
+	private boolean execStatus;
+
 }

@@ -24,4 +24,5 @@ public interface TxrhMxZhmxDao extends BaseMapper<TxrhMxZhmxEntity> {
     TxrhMxZhmxEntity getInfoById(@Param("id") String id);
 
     Page<TxrhMxZhmxEntity> queryPages(Page<TxrhMxZhmxEntity> page, @Param("search") TxrhMxZhmxEntity search);
+
 }

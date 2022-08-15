@@ -47,6 +47,7 @@ public class TxrhMxZhmxController extends AbstractController {
     @PostMapping("/jdcsdz")
     @ApiOperation("查询当前节点已配置参数")
     public R saveJdCsdz(@RequestBody ParamFormVo vo){
+
         vo.getToParams().forEach(item ->{
             if ("1".equals(item.getFromType())){
                 item.setFromParam(Long.parseLong(item.getFromColumnName()));
@@ -88,10 +89,13 @@ public class TxrhMxZhmxController extends AbstractController {
     /**
      * 工作流运行
      * */
-    @GetMapping("/startflow/{id}")
-    @ApiOperation("通过id执行工作流")
-    public R runWorkFlow(@PathVariable("id") String id){
-        txrhMxZhmxService.runWorkFlow(id);
+    @GetMapping("/startflow/{id}/{ticket}")
+    @ApiOperation("通过id执行工作流,携带一个票据")
+    public R runWorkFlow(@PathVariable("id") String id, @PathVariable("ticket") String ticket) throws InterruptedException {
+        if (id == null){
+            return R.error("参数错误");
+        }
+        txrhMxZhmxService.runWorkFlow(id, ticket);
         return R.ok();
     }
 
@@ -101,7 +105,13 @@ public class TxrhMxZhmxController extends AbstractController {
     @GetMapping("/clone/{id}")
     @ApiOperation("克隆模型信息")
     public R clone(@PathVariable("id") String id){
-        boolean success = txrhMxZhmxService.cloneFlow(id);
+        if(getUserId() != Constant.SUPER_ADMIN){
+            if (getUser().getRoleIdList() == null){
+                return R.error("没有权限");
+            }
+        }
+        boolean success = txrhMxZhmxService.cloneFlow(id, getUserId());
+
         return R.ok();
     }
 
@@ -197,6 +207,20 @@ public class TxrhMxZhmxController extends AbstractController {
     @PutMapping("/update")
     @ApiOperation("修改")
     public R update(@RequestBody TxrhMxZhmxEntity txrhMxZhmx){
+        // 先查询是否有该信息，并且是属于本人操作
+        if(getUserId() != Constant.SUPER_ADMIN){
+            if (getUser().getRoleIdList() == null){
+                return R.error("没有权限");
+            }
+            if (getUser().getRoleIdList().contains(Constant.MXYHJS_ID)){
+                txrhMxZhmx.setCreateUser(getUserId());
+            }
+            TxrhMxZhmxEntity entity = txrhMxZhmxService.getOne(new QueryWrapper<TxrhMxZhmxEntity>()
+                    .eq("id", txrhMxZhmx.getId()).eq("create_user", getUserId()).last("limit 1"));
+            if (entity == null){
+                return R.error("没有权限");
+            }
+        }
 		txrhMxZhmxService.updateById(txrhMxZhmx);
 
         return R.ok();

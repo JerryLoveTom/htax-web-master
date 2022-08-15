@@ -38,10 +38,10 @@ public interface TxrhMxZhmxService extends IService<TxrhMxZhmxEntity> {
     boolean deleteZhmxById(String id);
 
     // 克隆模型信息
-    boolean cloneFlow(String id);
+    boolean cloneFlow(String id, long userId);
 
-    // 通过id执行工作流
-    void runWorkFlow(String id);
+    // 通过id执行工作流，ticket是本次执行的票据
+    void runWorkFlow(String id, String ticket) throws InterruptedException;
 
     // 获取当前节点的上级节点
     List<TxrhZhmxJdEntity> getFromJdByToId(String toId);

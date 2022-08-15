@@ -2,6 +2,7 @@ package com.htax.modules.txrh.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.htax.modules.txrh.entity.TxrhZhmxJdEntity;
+import com.htax.modules.txrh.entity.vo.TxrhZhmxJdVo;
 
 import java.util.List;
 
@@ -14,6 +15,6 @@ import java.util.List;
  * @date 2022-08-02 19:47:02
  */
 public interface TxrhZhmxJdService extends IService<TxrhZhmxJdEntity> {
-
+    List<TxrhZhmxJdVo> getList(TxrhZhmxJdEntity search);
 }
 

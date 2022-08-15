@@ -16,6 +16,13 @@
         <result property="state" column="state"/>
         <result property="mold" column="mold"/>
     </resultMap>
-
+    <select id="getList" resultType="com.htax.modules.txrh.entity.vo.TxrhZhmxJdVo">
+        select * from txrh_zhmx_jd
+        <where>
+            <if test="search.zhmxId != null and search.zhmxId != ''">
+                and zhmx_id = #{search.zhmxId }
+            </if>
+        </where>
+    </select>
 
 </mapper>

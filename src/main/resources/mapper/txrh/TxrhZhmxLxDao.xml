@@ -7,8 +7,8 @@
     <resultMap type="com.htax.modules.txrh.entity.TxrhZhmxLxEntity" id="txrhZhmxLxMap">
         <result property="id" column="id"/>
         <result property="zhmxId" column="zhmx_id"/>
-        <result property="from" column="from"/>
-        <result property="to" column="to"/>
+        <result property="fromNode" column="from_node"/>
+        <result property="toNode" column="to_node"/>
         <result property="label" column="label"/>
     </resultMap>
 

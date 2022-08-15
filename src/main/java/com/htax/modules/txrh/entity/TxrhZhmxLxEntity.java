@@ -33,12 +33,17 @@ public class TxrhZhmxLxEntity implements Serializable {
 	/**
 	 * 开始节点ID
 	 */
-	@TableField("`from`")
+	private String fromNode;
+
+	@TableField(exist = false)
 	private String from;
+
 	/**
 	 * 结束节点ID
 	 */
-	@TableField("`to`")
+	private String toNode;
+
+	@TableField(exist = false)
 	private String to;
 	/**
 	 * 条件
